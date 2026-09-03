@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  identity-service:
+    image: identity-service:0.1.0
+    container_name: identity-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    restart: unless-stopped
