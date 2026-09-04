@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://identity-postgres:${IDENTITY_DB_PORT:5432}/${IDENTITY_DB_NAME:identity_db}
+    username: ${IDENTITY_DB_USER:identity_user}
+    password: ${IDENTITY_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true

@@ -2,6 +2,12 @@ spring:
   application:
     name: identity-service
 
+  datasource:
+    url: jdbc:postgresql://localhost:${IDENTITY_DB_PORT:5432}/${IDENTITY_DB_NAME:identity_db}
+    username: ${IDENTITY_DB_USER:identity_user}
+    password: ${IDENTITY_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     open-in-view: false
     hibernate:
