@@ -1,11 +1,49 @@
-version: '3.8'
-
 services:
   identity-service:
     image: identity-service:0.1.0
     container_name: identity-service
     ports:
       - "8081:8081"
+
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      IDENTITY_DB_NAME: ${IDENTITY_DB_NAME}
+      IDENTITY_DB_USER: ${IDENTITY_DB_USER}
+      IDENTITY_DB_PASSWORD: ${IDENTITY_DB_PASSWORD}
+      IDENTITY_DB_PORT: 5432
+
+    depends_on:
+      identity-postgres:
+        condition: service_healthy
+
     restart: unless-stopped
+
+  identity-postgres:
+    image: postgres:16
+    container_name: identity-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${IDENTITY_DB_NAME}
+      POSTGRES_USER: ${IDENTITY_DB_USER}
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD}
+
+    ports:
+      - "${IDENTITY_DB_PORT}:5432"
+
+    volumes:
+      - identity_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${IDENTITY_DB_USER} -d ${IDENTITY_DB_NAME}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  identity_postgres_data:
+
