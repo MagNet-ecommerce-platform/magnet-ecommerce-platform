@@ -1384,3 +1384,24 @@ STEP 110 Git status
 STEP 111 Commit Phase 02
 STEP 112 Push Phase 02
 STEP 113 Phase 02 checkpoint
+
+
+                    IDENTITY SERVICE
+                          │
+                          ▼
+                    Authentication
+                          │
+             ┌────────────┴────────────┐
+             │                         │
+             ▼                         ▼
+           User                     Roles
+             │                         │
+             │                         ▼
+             │                    Permissions
+             │
+             ▼
+      UserStatus
+             │
+    ┌────────┼────────┬──────────┬───────────┐
+    ▼        ▼        ▼          ▼           ▼
+ PENDING  ACTIVE  INACTIVE    LOCKED     SUSPENDED
