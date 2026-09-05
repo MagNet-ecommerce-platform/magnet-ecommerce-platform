@@ -6,31 +6,17 @@ import com.magnet.ecommerce.identity_service.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    @Override
-    Optional<User> findById(Long id);
-
-    @Override
-    List<User> findAll();
-
-    @Override
-    <S extends User> S save(S user);
-
-    @Override
-    void delete(User user);
-
-    @Override
-    void deleteById(Long id);
-
-    @Override
-    boolean existsById(Long id);
-
-    @Override
-    long count();
+public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findById(UUID id);
+
+    List<User> findAll();
+
+    <S extends User> S save(S entity);
 
     boolean existsByEmail(String email);
 }

@@ -6,29 +6,9 @@ import com.magnet.ecommerce.identity_service.entity.Permission;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface PermissionRepository extends JpaRepository<Permission, Long> {
-
-    @Override
-    Optional<Permission> findById(Long id);
-
-    @Override
-    List<Permission> findAll();
-
-    @Override
-    <S extends Permission> S save(S permission);
-
-    @Override
-    void delete(Permission permission);
-
-    @Override
-    void deleteById(Long id);
-
-    @Override
-    boolean existsById(Long id);
-
-    @Override
-    long count();
+public interface PermissionRepository extends JpaRepository<Permission, UUID> {
 
     Optional<Permission> findByName(String name);
 
