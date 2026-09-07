@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     <S extends User> S save(S entity);
 
     boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
 }

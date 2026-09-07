@@ -128,4 +128,9 @@ public class User {
     public Set<Role> getRoles() {
         return roles;
     }
+    public void activate() {
+        this.status = UserStatus.ACTIVE;
+        this.enabled = true;
+        this.updatedAt = Instant.now();
+    }
 }
