@@ -133,4 +133,10 @@ public class User {
         this.enabled = true;
         this.updatedAt = Instant.now();
     }
+
+    public void deactivate() {
+        this.status = UserStatus.INACTIVE;
+        this.enabled = false;
+        this.updatedAt = Instant.now();
+    }
 }
