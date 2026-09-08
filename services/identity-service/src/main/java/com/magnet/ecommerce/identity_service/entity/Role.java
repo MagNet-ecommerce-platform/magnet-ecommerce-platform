@@ -38,6 +38,14 @@ public class Role {
     @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new HashSet<>();
 
+    public void addPermission(Permission permission) {
+        this.permissions.add(permission);
+    }
+    
+    public void removePermission(Permission permission) {
+        this.permissions.remove(permission);
+    }
+    
     protected Role() {
         // Required by JPA
     }

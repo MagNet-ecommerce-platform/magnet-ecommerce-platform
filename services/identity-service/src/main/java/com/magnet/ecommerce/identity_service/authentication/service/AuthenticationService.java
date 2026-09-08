@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.magnet.ecommerce.identity_service.activation.service.ActivationTokenService;
+import com.magnet.ecommerce.identity_service.entity.Role;
+import com.magnet.ecommerce.identity_service.repository.RoleRepository;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -24,6 +26,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ActivationTokenService activationTokenService;
+    private final RoleRepository roleRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -50,6 +53,15 @@ public class AuthenticationService {
                 now
         );
 
+        Role customerRole = roleRepository.findByName("CUSTOMER")
+        .orElseThrow(() ->
+                new IllegalStateException(
+                        "Default CUSTOMER role is not configured"
+                )
+        );
+
+        user.addRole(customerRole);
+        
         User savedUser = userRepository.save(user);
 
         activationTokenService.createToken(savedUser);
