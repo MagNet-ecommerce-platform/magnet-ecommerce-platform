@@ -13,7 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import com.magnet.ecommerce.identity_service.security.RestAuthenticationEntryPoint;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+import com.magnet.ecommerce.identity_service.security.jwt.JwtAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@EnableConfigurationProperties(JwtProperties.class)
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
@@ -21,15 +26,18 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
             CustomUserDetailsService customUserDetailsService,
             PasswordEncoder passwordEncoder,
-            RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
+            RestAuthenticationEntryPoint restAuthenticationEntryPoint,
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
 
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -65,11 +73,18 @@ public class SecurityConfig {
                     )
                 )
 
+                .addFilterBefore(
+                          jwtAuthenticationFilter,
+                           UsernamePasswordAuthenticationFilter.class
+                 )
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/activate",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout",
                                 "/api/v1/auth/deactivate"
                         ).permitAll()
 
@@ -77,6 +92,8 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
+
+                        .requestMatchers("/error").permitAll()
 
                         .anyRequest().authenticated()
                 );

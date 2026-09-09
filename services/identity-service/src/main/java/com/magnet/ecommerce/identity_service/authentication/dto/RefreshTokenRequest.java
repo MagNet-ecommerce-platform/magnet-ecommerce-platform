@@ -1,0 +1,11 @@
+package com.magnet.ecommerce.identity_service.authentication.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public record RefreshTokenRequest(
+
+        @NotBlank(message = "Refresh token is required")
+        String refreshToken
+
+) {
+}

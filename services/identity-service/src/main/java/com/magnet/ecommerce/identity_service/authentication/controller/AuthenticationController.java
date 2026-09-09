@@ -2,8 +2,11 @@ package com.magnet.ecommerce.identity_service.authentication.controller;
 
 import com.magnet.ecommerce.identity_service.authentication.dto.AuthenticationResponse;
 import com.magnet.ecommerce.identity_service.authentication.dto.LoginRequest;
+import com.magnet.ecommerce.identity_service.authentication.dto.LoginResponse;
 import com.magnet.ecommerce.identity_service.authentication.dto.RegisterRequest;
 import com.magnet.ecommerce.identity_service.authentication.service.AuthenticationService;
+import com.magnet.ecommerce.identity_service.authentication.dto.RefreshTokenRequest;
+import com.magnet.ecommerce.identity_service.authentication.dto.LogoutRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,12 +33,35 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
 
-        AuthenticationResponse response =
+        LoginResponse response =
                 authenticationService.login(request);
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refreshAccessToken(
+        @Valid @RequestBody RefreshTokenRequest request) {
+
+    LoginResponse response =
+            authenticationService.refreshAccessToken(
+                    request.refreshToken()
+            );
+
+    return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+        @Valid @RequestBody LogoutRequest request) {
+
+    authenticationService.logout(
+            request.refreshToken()
+    );
+
+    return ResponseEntity.noContent().build();
+}
 }
