@@ -35,17 +35,21 @@ public class Role {
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    @JoinTable(
+            name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
     private Set<Permission> permissions = new HashSet<>();
 
     public void addPermission(Permission permission) {
         this.permissions.add(permission);
     }
-    
+
     public void removePermission(Permission permission) {
         this.permissions.remove(permission);
     }
-    
+
     protected Role() {
         // Required by JPA
     }
@@ -75,12 +79,20 @@ public class Role {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Set<Permission> getPermissions() {

@@ -1,5 +1,6 @@
 package com.magnet.ecommerce.identity_service.entity;
 
+import com.magnet.ecommerce.identity_service.entity.enums.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,8 +16,6 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import com.magnet.ecommerce.identity_service.entity.enums.UserStatus;
 
 @Entity
 @Table(name = "users")
@@ -48,6 +47,16 @@ public class User {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
+    // Login security fields
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts;
+
+    @Column(name = "last_failed_login_at")
+    private Instant lastFailedLoginAt;
+
+    @Column(name = "locked_at")
+    private Instant lockedAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -55,18 +64,14 @@ public class User {
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles = new HashSet<>();
 
-    public void addRole(Role role) {
-        this.roles.add(role);
-    }
-    
-    public void removeRole(Role role) {
-        this.roles.remove(role);
-    }
     protected User() {
-        // Required by JPA
     }
 
     public User(
@@ -79,7 +84,8 @@ public class User {
             UserStatus status,
             boolean enabled,
             Instant createdAt,
-            Instant updatedAt) {
+            Instant updatedAt
+    ) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -90,6 +96,7 @@ public class User {
         this.enabled = enabled;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.failedLoginAttempts = 0;
     }
 
     public UUID getId() {
@@ -124,6 +131,18 @@ public class User {
         return enabled;
     }
 
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public Instant getLastFailedLoginAt() {
+        return lastFailedLoginAt;
+    }
+
+    public Instant getLockedAt() {
+        return lockedAt;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -135,6 +154,59 @@ public class User {
     public Set<Role> getRoles() {
         return roles;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public void setLastFailedLoginAt(Instant lastFailedLoginAt) {
+        this.lastFailedLoginAt = lastFailedLoginAt;
+    }
+
+    public void setLockedAt(Instant lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
+
     public void activate() {
         this.status = UserStatus.ACTIVE;
         this.enabled = true;

@@ -57,6 +57,10 @@ public class Permission {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
