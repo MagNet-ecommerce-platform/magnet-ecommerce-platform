@@ -9,70 +9,62 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class ForbiddenExceptionHandler {
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthorizationDenied(
+    public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
             AuthorizationDeniedException exception,
             HttpServletRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-
-        body.put("timestamp", Instant.now());
-        body.put("status", HttpStatus.FORBIDDEN.value());
-        body.put("error", "FORBIDDEN");
-        body.put(
-                "message",
-                "You do not have permission to access this resource"
+        ErrorResponse response = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "FORBIDDEN",
+                "You do not have permission to access this resource",
+                request.getRequestURI()
         );
-        body.put("path", request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(body);
+                .body(response);
     }
 
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
-    public ResponseEntity<Map<String, Object>>
+    public ResponseEntity<ErrorResponse>
     handleAuthenticationCredentialsNotFound(
             AuthenticationCredentialsNotFoundException exception,
             HttpServletRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-
-        body.put("timestamp", Instant.now());
-        body.put("status", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", "UNAUTHORIZED");
-        body.put(
-                "message",
-                "Authentication is required to access this resource"
+        ErrorResponse response = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "UNAUTHORIZED",
+                "Authentication is required to access this resource",
+                request.getRequestURI()
         );
-        body.put("path", request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(body);
+                .body(response);
     }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidRefreshToken(
+    public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(
             InvalidRefreshTokenException exception,
             HttpServletRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-
-        body.put("timestamp", Instant.now());
-        body.put("status", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", "UNAUTHORIZED");
-        body.put("message", exception.getMessage());
-        body.put("path", request.getRequestURI());
+        ErrorResponse response = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "UNAUTHORIZED",
+                exception.getMessage(),
+                request.getRequestURI()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(body);
+                .body(response);
     }
 }

@@ -218,4 +218,28 @@ public class User {
         this.enabled = false;
         this.updatedAt = Instant.now();
     }
+    public void recordFailedLoginAttempt() {
+        this.failedLoginAttempts++;
+        this.lastFailedLoginAt = Instant.now();
+    }
+    
+    public void resetFailedLoginAttempts() {
+        this.failedLoginAttempts = 0;
+        this.lastFailedLoginAt = null;
+    }
+    
+    public void lockAccount() {
+        this.status = UserStatus.LOCKED;
+        this.enabled = false;
+        this.lockedAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+    public void unlockAccount() {
+        this.status = UserStatus.ACTIVE;
+        this.enabled = true;
+        this.failedLoginAttempts = 0;
+        this.lastFailedLoginAt = null;
+        this.lockedAt = null;
+        this.updatedAt = Instant.now();
+    }
 }

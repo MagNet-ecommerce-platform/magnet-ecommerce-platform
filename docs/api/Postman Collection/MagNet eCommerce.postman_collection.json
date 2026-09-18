@@ -123,6 +123,9 @@
             {
               "name": "Deactivate",
               "request": {
+                "auth": {
+                  "type": "bearer"
+                },
                 "method": "POST",
                 "header": [],
                 "body": {
@@ -154,10 +157,33 @@
             {
               "name": "Refresh",
               "request": {
-                "method": "GET",
+                "auth": {
+                  "type": "bearer"
+                },
+                "method": "POST",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"refreshToken\": \"PASTE_YOUR_REFRESH_TOKEN_HERE\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
-                  "raw": ""
+                  "raw": "http://localhost:8081/api/v1/auth/refresh",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
                 }
               },
               "response": []
@@ -193,6 +219,68 @@
                     "v1",
                     "auth",
                     "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Forgot Password",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"postmanuser01@example.com\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/v1/auth/forgot-password",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Password Reset",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"token\": \"b918dde1c5e09be49b9c81514d6efe07d5d5cb8309f125144a5c37e0a63c0996\",\r\n  \"newPassword\": \"NewPassword123!\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/v1/auth/reset-password",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
                   ]
                 }
               },
@@ -314,7 +402,7 @@
                 "auth": {
                   "type": "bearer"
                 },
-                "method": "GET",
+                "method": "DELETE",
                 "header": [],
                 "url": {
                   "raw": "http://localhost:8081/api/v1/roles/MANAGER",
@@ -570,38 +658,6 @@
               "response": []
             },
             {
-              "name": "Get User",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8081/api/v1/users/fd2d76ee-1f83-4ac2-b880-75585217d839",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8081",
-                  "path": [
-                    "api",
-                    "v1",
-                    "users",
-                    "fd2d76ee-1f83-4ac2-b880-75585217d839"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "Create User",
               "request": {
                 "auth": {
@@ -748,6 +804,47 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "Unlock User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"cruduser8.updated@example.com\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/v1/users/unlock",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "unlock"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -760,7 +857,16 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": ""
+                  "raw": "http://localhost:8081/actuator/health",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "health"
+                  ]
                 }
               },
               "response": []
@@ -955,14 +1061,7 @@
               "name": "Assign User Role",
               "request": {
                 "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "",
-                      "type": "string"
-                    }
-                  ]
+                  "type": "bearer"
                 },
                 "method": "POST",
                 "header": [],
