@@ -9,6 +9,7 @@ import com.magnet.ecommerce.identity_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.magnet.ecommerce.identity_service.kafka.IdentityEventPublisher;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class ActivationService {
 
     private final ActivationTokenRepository activationTokenRepository;
     private final UserRepository userRepository;
-
+    private final IdentityEventPublisher identityEventPublisher;
     public AuthenticationResponse activate(String token) {
 
         ActivationToken activationToken =
@@ -54,6 +55,7 @@ public class ActivationService {
 
         userRepository.save(user);
         activationTokenRepository.save(activationToken);
+        identityEventPublisher.publishUserActivated(user);
 
         return new AuthenticationResponse(
                 user.getId(),

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.magnet.ecommerce.identity_service.exception.AccountLockedException;
 import com.magnet.ecommerce.identity_service.exception.InvalidLoginException;
+import com.magnet.ecommerce.identity_service.kafka.IdentityEventPublisher;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -45,6 +46,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final IdentityEventPublisher identityEventPublisher;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -83,6 +85,8 @@ public class AuthenticationService {
         User savedUser = userRepository.save(user);
 
         activationTokenService.createToken(savedUser);
+        
+        identityEventPublisher.publishUserRegistered(savedUser);
 
         return toAuthenticationResponse(savedUser);
     }
