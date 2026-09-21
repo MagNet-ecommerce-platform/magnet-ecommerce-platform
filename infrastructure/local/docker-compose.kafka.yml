@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: apache/kafka:4.0.0
+    image: apache/kafka:4.0.2
     container_name: identity-kafka
     hostname: kafka
 
@@ -26,10 +26,18 @@ services:
 
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
     networks:
       - local_default
 
     restart: unless-stopped
+
+volumes:
+  kafka_data:
 
 networks:
   local_default:

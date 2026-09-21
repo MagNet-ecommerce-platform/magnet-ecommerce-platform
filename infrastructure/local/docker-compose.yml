@@ -2,15 +2,18 @@ services:
   identity-service:
     image: identity-service:0.1.0
     container_name: identity-service
+
     ports:
       - "${IDENTITY_SERVICE_PORT}:8081"
 
     environment:
       SPRING_PROFILES_ACTIVE: docker
+
       IDENTITY_DB_NAME: ${IDENTITY_DB_NAME}
       IDENTITY_DB_USER: ${IDENTITY_DB_USER}
       IDENTITY_DB_PASSWORD: ${IDENTITY_DB_PASSWORD}
       IDENTITY_DB_PORT: 5432
+
       JWT_SECRET: ${JWT_SECRET}
       JWT_ACCESS_TOKEN_EXPIRATION: ${JWT_ACCESS_TOKEN_EXPIRATION:-900000}
       JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION:-604800000}
@@ -19,11 +22,15 @@ services:
       identity-postgres:
         condition: service_healthy
 
+    networks:
+      - local_default
+
     restart: unless-stopped
 
   identity-postgres:
     image: postgres:16
     container_name: identity-postgres
+
     restart: unless-stopped
 
     environment:
@@ -47,5 +54,12 @@ services:
       timeout: 5s
       retries: 5
 
+    networks:
+      - local_default
+
 volumes:
   identity_postgres_data:
+
+networks:
+  local_default:
+    external: true
