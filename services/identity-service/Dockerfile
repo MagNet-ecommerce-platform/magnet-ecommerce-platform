@@ -15,7 +15,8 @@ COPY pom.xml .
 COPY src ./src
 
 # Build application
-RUN mvn clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn clean package -DskipTests
 
 
 # ==========================================

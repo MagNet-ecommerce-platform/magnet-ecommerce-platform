@@ -26,8 +26,18 @@ spring:
       properties:
         spring.json.trusted.packages: com.magnet.ecommerce.identity_service.event
 
-  management:
+management:
+  otlp:
     metrics:
       export:
+        enabled: false
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+  opentelemetry:
+    tracing:
+      export:
         otlp:
-          enabled: false
+          endpoint: http://otel-collector:4318/v1/traces
