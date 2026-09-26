@@ -1,0 +1,51 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  identity-service-docker:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: services/identity-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Verify Java version
+        run: java -version
+
+      - name: Run Identity Service tests
+        run: mvn clean test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Identity Service Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/identity-service
+          file: ./services/identity-service/Dockerfile
+          push: false
+          tags: magnet/identity-service:ci-${{ github.sha }}
+
+      - name: Verify Docker image
+        run: docker image inspect magnet/identity-service:ci-${{ github.sha }}
