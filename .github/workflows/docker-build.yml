@@ -1,9 +1,4 @@
-$ErrorActionPreference = "Stop"
-
-$workflow = ".github\workflows\docker-build.yml"
-
-$yaml = @'
-name: Docker Build
+﻿name: Docker Build
 
 on:
   push:
@@ -55,13 +50,4 @@ jobs:
 
       - name: Verify Docker image
         run: docker image inspect magnet/identity-service:ci-${{ github.sha }}
-'@
 
-Set-Content -Path $workflow -Value $yaml -Encoding utf8
-
-Write-Host ""
-Write-Host "Updated workflow:"
-Write-Host $workflow
-Write-Host ""
-
-Get-Content $workflow
