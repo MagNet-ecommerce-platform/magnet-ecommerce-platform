@@ -1,0 +1,30 @@
+# Production environment overrides for Identity Service.
+
+replicaCount: 3
+
+image:
+  tag: "0.1.0"
+
+env:
+  springProfilesActive: prod
+
+  identityDb:
+    host: identity-postgres
+    port: 5432
+    name: identity_db
+    user: identity_user
+
+  kafka:
+    bootstrapServers: kafka:9092
+
+  jwt:
+    accessTokenExpiration: "900000"
+    refreshTokenExpiration: "604800000"
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 1Gi
