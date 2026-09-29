@@ -1,0 +1,91 @@
+﻿# Default values for the MagNet Identity Service Helm chart.
+
+replicaCount: 1
+
+image:
+  repository: c8n.io/eyob-09/identity-service
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8081
+  targetPort: 8081
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+probes:
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+env:
+  springProfilesActive: dev
+
+  identityDb:
+    host: identity-postgres
+    port: 5432
+    name: identity_db
+    user: identity_user
+
+  kafka:
+    bootstrapServers: kafka:9092
+
+  jwt:
+    accessTokenExpiration: "900000"
+    refreshTokenExpiration: "604800000"
+
+# Kubernetes Secret containing sensitive runtime configuration.
+# The Secret itself is intentionally managed outside this Helm chart.
+secrets:
+  existingSecret: identity-service-secrets
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

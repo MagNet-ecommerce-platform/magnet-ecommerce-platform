@@ -1,0 +1,39 @@
+﻿MagNet Identity Service has been deployed.
+
+Release:
+  {{ .Release.Name }}
+
+Namespace:
+  {{ .Release.Namespace }}
+
+Service:
+  {{ include "identity-service.fullname" . }}
+
+Port:
+  {{ .Values.service.port }}
+
+The service uses ClusterIP and is intended for internal Kubernetes communication.
+
+To check the deployment:
+
+  kubectl get deployment {{ include "identity-service.fullname" . }} -n {{ .Release.Namespace }}
+
+To check the service:
+
+  kubectl get service {{ include "identity-service.fullname" . }} -n {{ .Release.Namespace }}
+
+To check the pods:
+
+  kubectl get pods -l app.kubernetes.io/name={{ include "identity-service.name" . }} -n {{ .Release.Namespace }}
+
+To view application logs:
+
+  kubectl logs -l app.kubernetes.io/name={{ include "identity-service.name" . }} -n {{ .Release.Namespace }}
+
+To access the service locally:
+
+  kubectl port-forward service/{{ include "identity-service.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+
+Then access:
+
+  http://localhost:{{ .Values.service.port }}/actuator/health
