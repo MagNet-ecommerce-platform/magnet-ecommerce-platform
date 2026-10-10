@@ -1,10 +1,10 @@
-﻿# Default values for the MagNet Identity Service Helm chart.
+# Default values for the MagNet Identity Service Helm chart.
 
 replicaCount: 1
 
 image:
   repository: c8n.io/eyob-09/identity-service
-  tag: "0.1.0"
+  tag: "0.1.1"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -19,28 +19,36 @@ service:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 256Mi
-  limits:
-    cpu: 500m
+    cpu: 200m
     memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
 
 probes:
+
+  startup:
+    path: /actuator/health/liveness
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 60
+
   liveness:
     path: /actuator/health/liveness
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
+    initialDelaySeconds: 90
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 8
 
   readiness:
     path: /actuator/health/readiness
-    initialDelaySeconds: 20
+    initialDelaySeconds: 60
     periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
+    timeoutSeconds: 10
+    failureThreshold: 8
 
 env:
+
   springProfilesActive: dev
 
   identityDb:
@@ -58,6 +66,7 @@ env:
 
 # Kubernetes Secret containing sensitive runtime configuration.
 # The Secret itself is intentionally managed outside this Helm chart.
+
 secrets:
   existingSecret: identity-service-secrets
 
@@ -89,3 +98,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+hostAliases: []

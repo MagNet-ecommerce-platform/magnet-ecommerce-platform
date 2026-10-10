@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+
   pull_request:
     branches:
       - main
@@ -38,3 +39,6 @@ jobs:
 
       - name: Run Identity Service tests
         run: mvn clean test
+
+      - name: Build Identity Service
+        run: mvn clean package -DskipTests

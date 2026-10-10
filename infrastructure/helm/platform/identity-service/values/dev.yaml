@@ -3,19 +3,21 @@
 replicaCount: 1
 
 image:
-  tag: "0.1.0"
+  repository: identity-service
+  tag: "0.1.1"
+  pullPolicy: IfNotPresent
 
 env:
   springProfilesActive: dev
 
   identityDb:
-    host: identity-postgres
+    host: host.docker.internal
     port: 5432
     name: identity_db
     user: identity_user
 
   kafka:
-    bootstrapServers: kafka:9092
+    bootstrapServers: host.docker.internal:29092
 
   jwt:
     accessTokenExpiration: "900000"
@@ -23,8 +25,14 @@ env:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 256Mi
-  limits:
-    cpu: 500m
+    cpu: 200m
     memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+# Docker Desktop/k3d development host mapping only.
+hostAliases:
+  - ip: "192.168.65.254"
+    hostnames:
+      - "host.docker.internal"

@@ -1,4 +1,4 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "identity-service.fullname" . }}
@@ -11,20 +11,24 @@ spec:
       {{- include "identity-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         {{- include "identity-service.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       serviceAccountName: {{ include "identity-service.serviceAccountName" . }}
-
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.hostAliases }}
+      hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
@@ -33,11 +37,11 @@ spec:
 
       containers:
         - name: identity-service
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           ports:
             - name: http
@@ -48,26 +52,23 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.env.springProfilesActive | quote }}
 
-            - name: IDENTITY_DB_PORT
-              value: {{ .Values.env.identityDb.port | quote }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://{{ .Values.env.identityDb.host }}:{{ .Values.env.identityDb.port }}/{{ .Values.env.identityDb.name }}"
 
-            - name: IDENTITY_DB_NAME
-              value: {{ .Values.env.identityDb.name | quote }}
-
-            - name: IDENTITY_DB_USER
-              value: {{ .Values.env.identityDb.user | quote }}
-
-            - name: IDENTITY_DB_PASSWORD
+            - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.existingSecret }}
-                  key: IDENTITY_DB_PASSWORD
+                  name: identity-db-secret
+                  key: DB_USERNAME
 
-            - name: JWT_SECRET
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.existingSecret }}
-                  key: JWT_SECRET
+                  name: identity-db-secret
+                  key: DB_PASSWORD
+
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .Values.env.kafka.bootstrapServers | quote }}
 
             - name: JWT_ACCESS_TOKEN_EXPIRATION
               value: {{ .Values.env.jwt.accessTokenExpiration | quote }}
@@ -75,11 +76,17 @@ spec:
             - name: JWT_REFRESH_TOKEN_EXPIRATION
               value: {{ .Values.env.jwt.refreshTokenExpiration | quote }}
 
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://{{ .Values.env.identityDb.host }}:{{ .Values.env.identityDb.port }}/{{ .Values.env.identityDb.name }}"
+          envFrom:
+            - secretRef:
+                name: identity-jwt-secret
 
-            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-              value: {{ .Values.env.kafka.bootstrapServers | quote }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path }}
+              port: http
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
 
           livenessProbe:
             httpGet:
@@ -102,17 +109,4 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      restartPolicy: Always

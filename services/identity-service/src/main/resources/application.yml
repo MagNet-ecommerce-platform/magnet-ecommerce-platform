@@ -1,5 +1,13 @@
 spring:
 
+  kafka:
+
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.magnet.ecommerce.identity_service.event
   application:
     name: identity-service
 
