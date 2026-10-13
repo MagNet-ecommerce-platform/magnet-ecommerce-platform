@@ -12,9 +12,7 @@ on:
       - develop
 
 jobs:
-
   dependency-check:
-
     name: Maven Dependency Check
     runs-on: ubuntu-latest
 
@@ -23,7 +21,6 @@ jobs:
         working-directory: services/identity-service
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v7
 
@@ -41,7 +38,14 @@ jobs:
         run: mvn dependency:tree
 
       - name: Run OWASP Dependency Check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
+          if [ -z "$NVD_API_KEY" ]; then
+            echo "::error::NVD_API_KEY is unavailable. Check repository secrets and workflow trigger."
+            exit 1
+          fi
           mvn org.owasp:dependency-check-maven:check \
             -DskipTests \
+            -DnvdApiKey="$NVD_API_KEY" \
             -DfailBuildOnCVSS=7
