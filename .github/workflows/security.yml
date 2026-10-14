@@ -48,4 +48,5 @@ jobs:
           mvn org.owasp:dependency-check-maven:check \
             -DskipTests \
             -DnvdApiKey="$NVD_API_KEY" \
+            -DsuppressionFiles="$GITHUB_WORKSPACE/services/identity-service/dependency-check-suppressions.xml" \
             -DfailBuildOnCVSS=7

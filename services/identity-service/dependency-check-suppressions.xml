@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
+    <suppress>
+        <notes><![CDATA[
+        Reviewed false positive:
+        CVE-2026-53914 concerns unsafe deserialization in Kotlin Gradle
+        build-cache metadata. The reported dependency is kotlin-stdlib,
+        a runtime library, not the Kotlin Gradle plugin.
+        Suppression is restricted to this CVE and this artifact.
+        Reassess if the dependency or advisory changes.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-stdlib@.*$</packageUrl>
+        <cve>CVE-2026-53914</cve>
+    </suppress>
+</suppressions>
