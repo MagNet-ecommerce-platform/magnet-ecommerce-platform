@@ -15,6 +15,7 @@ jobs:
   dependency-check:
     name: Maven Dependency Check
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     defaults:
       run:
@@ -31,6 +32,13 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Cache OWASP Dependency Check data
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: dependency-check-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            dependency-check-${{ runner.os }}-
       - name: Verify Java version
         run: java -version
 
@@ -50,3 +58,12 @@ jobs:
             -DnvdApiKey="$NVD_API_KEY" \
             -DsuppressionFiles="$GITHUB_WORKSPACE/services/identity-service/dependency-check-suppressions.xml" \
             -DfailBuildOnCVSS=7
+
+      - name: Upload Dependency-Check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: identity-service-dependency-check-report
+          path: services/identity-service/target/dependency-check-report.html
+          if-no-files-found: warn
+          retention-days: 14
